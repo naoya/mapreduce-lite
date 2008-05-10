@@ -1,0 +1,6 @@
+Revision history for Perl extension MapReduce::Lite.
+
+0.01  Sat May 10 19:23:10 2008
+	- original version; created by h2xs 1.23 with options
+		-AX -n MapReduce::Lite
+
