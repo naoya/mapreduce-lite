@@ -1,8 +1,10 @@
 package MapReduce::Lite::Buffer;
 use Moose;
 use overload '""' => 'as_string';
-
+use threads::shared;
 use Params::Validate qw/validate_pos/;
+
+my $mutex : shared;
 
 has buffer => (is => 'rw', default => sub { '' });
 
@@ -22,11 +24,12 @@ sub clear {
 
 sub flush {
     my ($self, $fh) = validate_pos(@_, 1, { isa => 'IO::Handle' });
-
     my $len = $self->size;
-    $fh->print($self->as_string);
-    $self->clear;
-
+    {
+        lock ($mutex);
+        $fh->syswrite($self->as_string);
+        $self->clear;
+    }
     return $len;
 }
 

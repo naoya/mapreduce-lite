@@ -16,7 +16,7 @@ has csv => (
 sub put {
     my ($self, $key, $value) = validate_pos(@_, 1, 1, 1);
     $self->csv->combine($key, $value);
-    $self->append( sprintf "%s\n", $self->csv->string );
+    $self->append(sprintf "%s\n", $self->csv->string);
 }
 
 1;

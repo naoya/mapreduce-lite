@@ -26,6 +26,12 @@ has out => (
     }
 );
 
+has num_threads => (
+    is      => 'rw',
+    isa     => 'Int',
+    default => 5,
+);
+
 sub create_input {
     my $self = shift;
     my $in = MapReduce::Lite::Spec::Input->new(

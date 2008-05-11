@@ -46,7 +46,7 @@ sub close {
 
 sub DESTROY {
     my $self = shift;
-    if ($self->handle->opened) {
+    if ($self->handle and $self->handle->opened) {
         $self->close;
     }
 }
