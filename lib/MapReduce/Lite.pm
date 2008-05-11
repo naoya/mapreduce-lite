@@ -16,14 +16,7 @@ sub mapreduce ($) {
     my ($spec) = validate_pos(@_, { isa => 'MapReduce::Lite::Spec' });
 
     do_map( $spec );
-
-    my $conduit = MapReduce::Lite::Conduit->new;
-    while (my $file = $spec->intermidate_dir->next) {
-        next if $file->is_dir;
-        $conduit->consume( $file );
-    }
-
-    do_reduce( $spec, $conduit );
+    do_reduce( $spec );
 }
 
 sub do_map {
@@ -57,18 +50,26 @@ sub map_thread {
 }
 
 sub do_reduce {
-    my ($spec, $conduit) = validate_pos(@_, 1, 1);
-    my $queue = Thread::Queue::Any->new;
+    my ($spec) = validate_pos(@_, 1);
 
-    my $iter = $conduit->iterator;
-    while ($iter->has_next) {
-        $queue->enqueue([ $iter->next ]);
-    }
+    for (my $r = 0; $r < $spec->out->num_tasks; $r++) {
+        my $conduit = MapReduce::Lite::Conduit->new(
+            intermidate_dir => $spec->intermidate_dir,
+        );
+        $conduit->consume($r);
 
-    for (my $i = 0; $i < $spec->num_threads; $i++) {
-        threads->create(reduce_thread => $queue, $spec->out->reducer);
+        my $queue = Thread::Queue::Any->new;
+
+        my $iter = $conduit->iterator;
+        while ($iter->has_next) {
+            $queue->enqueue([ $iter->next ]);
+        }
+
+        for (my $i = 0; $i < $spec->num_threads; $i++) {
+            threads->create(reduce_thread => $queue, $spec->out->reducer);
+        }
+        $_->join for threads->list;
     }
-    $_->join for threads->list;
 }
 
 sub reduce_thread {

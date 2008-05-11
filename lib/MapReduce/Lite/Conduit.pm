@@ -5,7 +5,8 @@ use Text::CSV_XS;
 use Data::Dumper;
 use Tie::Hash::Sorted;
 use List::RubyLike;
-use Params::Validate qw/validate_pos/;
+use Path::Class qw/file/;
+use Params::Validate qw/validate_pos SCALAR/;
 
 use MapReduce::Lite::FileIterator;
 use MapReduce::Lite::Conduit::Iterator;
@@ -23,6 +24,13 @@ has 'data' => (
         tie my %sorted, 'Tie::Hash::Sorted';
         \%sorted;
     }
+);
+
+has 'intermidate_dir' => (
+    is       => 'ro',
+    does     => 'Directory',
+    required => 1,
+    coerce   => 1,
 );
 
 sub put {
@@ -56,9 +64,12 @@ sub iterator {
 }
 
 sub consume {
-    my ($self, $file) = validate_pos(@_, 1, { isa => 'Path::Class::File' });
+    my ($self, $id) = validate_pos(@_, 1, { type => SCALAR });
 
-    my $iter = MapReduce::Lite::FileIterator->new(handle => $file->openr);
+    my $file = $self->intermidate_dir->file(sprintf "R%d.dat", $id);
+    my $handle = $file->open('r') or return;
+
+    my $iter = MapReduce::Lite::FileIterator->new(handle => $handle);
     while ($iter->has_next) {
         $self->csv->parse( $iter->next );
         $self->put( $self->csv->fields );
