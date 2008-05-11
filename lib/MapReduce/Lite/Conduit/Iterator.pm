@@ -1,5 +1,6 @@
 package MapReduce::Lite::Conduit::Iterator;
 use Moose;
+with 'MapReduce::Lite::Role::Iterator';
 
 has size    => ( is => 'rw', isa => 'Int');
 has conduit => (

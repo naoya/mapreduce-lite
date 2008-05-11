@@ -9,4 +9,9 @@ has reducer => (
     coerce   => 1,
 );
 
+has num_tasks => (
+    is      => 'rw',
+    default => 1,
+);
+
 1;

@@ -1,6 +1,7 @@
 package MapReduce::Lite::Reducer;
 use Moose::Role;
 
+with 'MapReduce::Lite::Role::Emitter';
 requires qw/reduce/;
 
 use Params::Validate qw/validate_pos/;
