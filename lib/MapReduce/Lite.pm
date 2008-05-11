@@ -81,3 +81,18 @@ sub reduce_thread {
 }
 
 1;
+
+=head1 NAME
+
+MapReduce::Lite - An experimental implementation of MapReduce for perl
+
+=head1 AUTHOR
+
+Naoya Ito, E<lt>naoya at hatena ne jp<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
