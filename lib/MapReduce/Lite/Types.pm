@@ -1,6 +1,7 @@
 package MapReduce::Lite::Types;
 use strict;
 use warnings;
+use Class::MOP;
 use Path::Class;
 use UNIVERSAL::require;
 
@@ -30,7 +31,9 @@ subtype 'Mapper'
 coerce 'Mapper'
     => from 'Str'
     => via {
-        $_->require or die $@;
+        if (not Class::MOP::is_class_loaded($_)) {
+            $_->require or die $@;
+        }
         $_->new;
     };
 
@@ -41,7 +44,9 @@ subtype 'Reducer'
 coerce 'Reducer'
     => from 'Str'
     => via {
-        $_->require or die $@;
+        if (not Class::MOP::is_class_loaded($_)) {
+            $_->require or die $@;
+        }
         $_->new;
     };
 
