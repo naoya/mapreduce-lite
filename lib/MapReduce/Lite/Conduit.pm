@@ -14,7 +14,7 @@ use MapReduce::Lite::Conduit::Iterator;
 has 'csv' => (
     is      => 'ro',
     default => sub {
-        Text::CSV_XS->new;
+        Text::CSV_XS->new({ binary => 1 });
     }
 );
 

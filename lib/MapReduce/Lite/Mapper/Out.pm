@@ -9,7 +9,7 @@ use Params::Validate qw/validate_pos/;
 has csv => (
     is      => 'ro',
     default => sub {
-        Text::CSV_XS->new;
+        Text::CSV_XS->new({ binary => 1 });
     }
 );
 
